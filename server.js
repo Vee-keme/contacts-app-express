@@ -1,7 +1,12 @@
 const express = require("express");
 const errHandler = require("./middleware/errorHandler");
+const connectDb = require("./config/dbConnection");
 const dotenv = require("dotenv").config();
 
+//connects mongoose schema to app
+connectDb();
+
+//app instance
 const app = express();
 
 const port = process.env.port || 5000;
