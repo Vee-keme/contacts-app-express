@@ -22,8 +22,20 @@ const registerUser = asyncHandler(async (req, res) => {
 
   //hashed password
   const hashedPassword = await bcrypt.hash(password, 10);
+  //new user instance
+  const user = await User.create({
+    username,
+    email,
+    password: hashedPassword,
+  });
+  console.log(`user created successfully ${user}`);
+  if (user) {
+    res.status(201).json({ _id: user.id, email: user.email });
+  } else {
+    res.status(400);
+    throw new Error("user data is not valid");
+  }
 
-  console.log("hashed password:", hashedPassword);
   res.json({ message: "register the user" });
 });
 
@@ -42,3 +54,9 @@ const currentUser = asyncHandler(async (req, res) => {
 });
 
 module.exports = { registerUser, loginUser, currentUser };
+
+// 1:11:13 JWT
+// 1:11:13 JWT
+// 1:11:13 JWT
+// 1:11:13 JWT
+// 1:11:13 JWT
