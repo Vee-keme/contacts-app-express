@@ -1,6 +1,7 @@
 const express = require("express");
 const errHandler = require("./middleware/errorHandler");
 const connectDb = require("./config/dbConnection");
+const validateToken = require("./middleware/validateTokenHandler");
 const dotenv = require("dotenv").config();
 
 //connects mongoose schema to app
@@ -15,6 +16,7 @@ const port = process.env.port || 5000;
 app.use(express.json());
 app.use("/api/contacts", require("./routes/contactRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
+
 //errHandler is a custom middleware for handling errors
 app.use(errHandler);
 
