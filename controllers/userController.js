@@ -5,6 +5,8 @@ const asyncHandler = require("express-async-handler");
 //bycrpt is used to hash passwords so the database can accept them
 const bcrypt = require("bcrypt");
 
+const jwt = require("jsonwebtoken");
+
 //@desc Register a User
 //@route POST /api/users/register
 //@access public
@@ -43,7 +45,32 @@ const registerUser = asyncHandler(async (req, res) => {
 //@route POST /api/users/login
 //@access public
 const loginUser = asyncHandler(async (req, res) => {
-  res.json({ message: "LOGIN USER" });
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400);
+    throw new Error("All fields are mandatory!");
+  }
+  const user = await User.findOne({ email });
+  //compare password with hashed password
+  if (email && (await bcrypt.compare(password, user.password))) {
+    const accessToken = jwt.sign(
+      {
+        //pass payload into jwt signin method
+        user: {
+          username: user.username,
+          email: user.email,
+          id: user.id,
+        },
+      },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1m" }
+    );
+    res.status(200).json({ accessToken });
+  } else {
+    res.status(401);
+    throw new Error("Email or Password is not valid!");
+  }
+  // res.json({ message: "LOGIN USER" });
 });
 
 //@desc Current User Info
@@ -54,9 +81,3 @@ const currentUser = asyncHandler(async (req, res) => {
 });
 
 module.exports = { registerUser, loginUser, currentUser };
-
-// 1:11:13 JWT
-// 1:11:13 JWT
-// 1:11:13 JWT
-// 1:11:13 JWT
-// 1:11:13 JWT
